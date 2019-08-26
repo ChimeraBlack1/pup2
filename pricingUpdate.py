@@ -9,8 +9,11 @@ sheet = wb.sheet_by_index(0)
 
 #write to workbook
 wbt = xlwt.Workbook()
-wbt = wbt.add_sheet('my worksheet')
-wbt.write(0,0, "new data yo")
+wst = wbt.add_sheet('my worksheet')
+# wst.write(0,0, "new data yo")
+# wst.write(1,1,"test test test yo")
+# wbt.save('example.xls')
+
 
 #for row 0 and column 0
 testInput = sheet.cell_value(0,0)
@@ -27,6 +30,7 @@ for x in range(0, xlListEnd):
   if testInput == "Main Unit":
     groupModels = True
     groupAcc = False
+    #if the accessory list is empty, that means we're still in the same model category
     if len(accList) <= 0:
       groupModels = True
       groupAcc = False
@@ -42,7 +46,10 @@ for x in range(0, xlListEnd):
 
   # group models together to attach related accessories.
   if groupModels == True and testInput != "Main Unit" and testInput != '':
-    productNumber = str(sheet.cell_value(x,0))
+    try:
+      productNumber = int(sheet.cell_value(x,0))
+    except:
+      productNumber = str(sheet.cell_value(x,0))
     name = str(sheet.cell_value(x,1))
     desc = str(sheet.cell_value(x+1,1))
     try:
@@ -68,7 +75,10 @@ for x in range(0, xlListEnd):
 
   # create a list of accessories related to attach to these models
   if groupAcc == True and testInput != "Accessories" and testInput != '':
-    productNumber = str(sheet.cell_value(x,0))
+    try:
+      productNumber = int(sheet.cell_value(x,0))
+    except:
+      productNumber = str(sheet.cell_value(x,0))
     name = str(sheet.cell_value(x,1))
     desc = str(sheet.cell_value(x+1,1))
     try:
@@ -95,41 +105,37 @@ for x in range(0, xlListEnd):
 print("total models: " + str(len(modelList)))
 
 for i in range(0, len(modelList)):
-  print(modelList[i]["name"] + " - " + modelList[i]["productNumber"])
+  print(modelList[i]["name"] + " - " + str(modelList[i]["productNumber"]))
+
+#add models found to CSV
+for i in range(0, len(modelList)):
+  wst.write(i, 0, "Model")
+  wst.write(i, 3, "Ricoh Production MAPP")
+  wst.write(i, 4, modelList[i]["name"])
+  wst.write(i,5, "Equipment")
+  wst.write(i,6, "Production")
+  wst.write(i, 11, modelList[i]["productNumber"])
+  wst.write(i, 13, modelList[i]["name"])
+  wst.write(i,14, 0)
+  wst.write(i,15, 0)
+  wst.write(i,16, 0)
+  wst.write(i,17, 0)
+  wst.write(i, 18, modelList[i]["mapp"])
+  wst.write(i, 19, modelList[i]["mapp"])
+  wst.write(i, 20, modelList[i]["msrp"])
+  wst.write(i, 29, modelList[i]["desc"])
+  wst.write(i, 31, modelList[i]["rmapp"])
+  wst.write(i, 32, modelList[i]["rmapp2"])
+  for j in range(0,38):
+    wst.write(i,33+j, 0)
+  # TODO add all accessories related to this model here
 
 
-# print("Model 1 " + modelList[0]["name"])
-# print(modelList)
-# print("Accessory 1 " + accList[0]["name"])
+wbt.save('UpdatedMAPP.xls')
 
+
+# print("total accessories: " + str(len(accList)))
 # for i in range(0, len(accList)):
-#   print(accList[i]["productNumber"])
 
-# print(accList[16]["productNumber"])
-# print(accList[16]["name"])
-# print(accList[16]["desc"])
-# print(accList[16]["mapp"])
-# print(accList[16]["rmapp"])
-# print(accList[16]["rmapp2"])
-# print(accList[16]["msrp"])
-
-# print("break")
-
-# print(accList[17]["productNumber"])
-# print(accList[17]["name"])
-# print(accList[17]["desc"])
-# print(accList[17]["mapp"])
-# print(accList[17]["rmapp"])
-# print(accList[17]["rmapp2"])
-# print(accList[17]["msrp"])
-
-# print("break2")
-
-# print(accList[18]["productNumber"])
-# print(accList[18]["name"])
-# print(accList[18]["desc"])
-# print(accList[18]["mapp"])
-# print(accList[18]["rmapp"])
-# print(accList[18]["rmapp2"])
-# print(accList[18]["msrp"])
+#   print(accList[i]["name"] + " - " + accList[i]["productNumber"])
 
