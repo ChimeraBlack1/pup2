@@ -27,7 +27,12 @@ for x in range(0, xlListEnd):
   if testInput == "Main Unit":
     groupModels = True
     groupAcc = False
-    #TODO need to reset the modelList on new Model group
+    if len(accList) <= 0:
+      groupModels = True
+      groupAcc = False
+    else:
+      # TODO need to reset the modelList on new Model group
+      break
 
   # if we hit 'accessories' stop grouping the models
   if testInput == "Accessories":
@@ -86,15 +91,19 @@ for x in range(0, xlListEnd):
 
     accList.append(newAcc)
 
-print("Model 1 " + modelList[0]["name"])
+
+print("total models: " + str(len(modelList)))
+
+for i in range(0, len(modelList)):
+  print(modelList[i]["name"] + " - " + modelList[i]["productNumber"])
+
+
+# print("Model 1 " + modelList[0]["name"])
 # print(modelList)
 # print("Accessory 1 " + accList[0]["name"])
 
 # for i in range(0, len(accList)):
 #   print(accList[i]["productNumber"])
-
-for i in range(0, len(modelList)):
-  print(modelList[i]["productNumber"])
 
 # print(accList[16]["productNumber"])
 # print(accList[16]["name"])
