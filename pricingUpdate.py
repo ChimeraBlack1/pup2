@@ -9,11 +9,7 @@ sheet = wb.sheet_by_index(0)
 
 #write to workbook
 wbt = xlwt.Workbook()
-wst = wbt.add_sheet('my worksheet')
-# wst.write(0,0, "new data yo")
-# wst.write(1,1,"test test test yo")
-# wbt.save('example.xls')
-
+wst = wbt.add_sheet('Updated Mapp')
 
 #for row 0 and column 0
 testInput = sheet.cell_value(0,0)
@@ -43,6 +39,12 @@ for x in range(0, xlListEnd):
     groupModels = False
     groupAcc = True
     #TODO need to reset the accList on new accessory group
+
+  if testInput == "Service Data":
+    groupModels = False
+    groupAcc = False
+    # TODO remove break for further logic
+    break
 
   # group models together to attach related accessories.
   if groupModels == True and testInput != "Main Unit" and testInput != '':
@@ -102,40 +104,66 @@ for x in range(0, xlListEnd):
     accList.append(newAcc)
 
 
-print("total models: " + str(len(modelList)))
+# print("total models: " + str(len(modelList)))
 
+# for i in range(0, len(modelList)):
+#   print(modelList[i]["name"] + " - " + str(modelList[i]["productNumber"]))
+modelStart = 0
+accStart = 0
+#add models found to XLS
 for i in range(0, len(modelList)):
-  print(modelList[i]["name"] + " - " + str(modelList[i]["productNumber"]))
+  print("accList: " + str(len(accList)))
+  print("modelStart: " + str(modelStart))
+  print("modelStart + accList length = " + str(len(accList) + modelStart))
+  wst.write(modelStart, 0, "Model")
+  wst.write(modelStart, 3, "Ricoh Production MAPP")
+  wst.write(modelStart, 4, modelList[i]["name"])
+  wst.write(modelStart, 5, "Equipment")
+  wst.write(modelStart, 6, "Production")
+  wst.write(modelStart, 11, modelList[i]["productNumber"])
+  wst.write(modelStart, 13, modelList[i]["name"])
+  wst.write(modelStart, 14, 0)
+  wst.write(modelStart, 15, 0)
+  wst.write(modelStart, 16, 0)
+  wst.write(modelStart, 17, 0)
+  wst.write(modelStart, 18, modelList[i]["mapp"])
+  wst.write(modelStart, 19, modelList[i]["mapp"])
+  wst.write(modelStart, 20, modelList[i]["msrp"])
+  wst.write(modelStart, 29, modelList[i]["desc"])
+  wst.write(modelStart, 31, modelList[i]["rmapp"])
+  wst.write(modelStart, 32, modelList[i]["rmapp2"])
+  
+  # print("accList again: " + str(len(accList)))
+  # print("modelStart again: " + str(modelStart))
+  # print("modelStart again + accList length again = " + str(len(accList) + modelStart))
 
-#add models found to CSV
-for i in range(0, len(modelList)):
-  wst.write(i, 0, "Model")
-  wst.write(i, 3, "Ricoh Production MAPP")
-  wst.write(i, 4, modelList[i]["name"])
-  wst.write(i,5, "Equipment")
-  wst.write(i,6, "Production")
-  wst.write(i, 11, modelList[i]["productNumber"])
-  wst.write(i, 13, modelList[i]["name"])
-  wst.write(i,14, 0)
-  wst.write(i,15, 0)
-  wst.write(i,16, 0)
-  wst.write(i,17, 0)
-  wst.write(i, 18, modelList[i]["mapp"])
-  wst.write(i, 19, modelList[i]["mapp"])
-  wst.write(i, 20, modelList[i]["msrp"])
-  wst.write(i, 29, modelList[i]["desc"])
-  wst.write(i, 31, modelList[i]["rmapp"])
-  wst.write(i, 32, modelList[i]["rmapp2"])
+  accStart = accStart + 1
+  #write in accessories
+  for k in range(0, len(accList)):
+    wst.write(accStart, 0, "Accessory")
+    wst.write(accStart, 3, "Ricoh Production MAPP")
+    wst.write(accStart, 4, accList[k]["name"])
+    wst.write(accStart, 13, accList[k]["name"])
+    accStart = accStart + 1
+  
+  modelStart = modelStart + len(accList) + 1
+  
+  
+  # write a bunch of zeros in the special pricing fields
   for j in range(0,38):
-    wst.write(i,33+j, 0)
+    wst.write(modelStart,33+j, 0)
   # TODO add all accessories related to this model here
-
+  # for k in range(1,len(accList)):
+  #   wst.write(k, 0, "Accessory")
+  # wst.write(i+1,0, "Accessory")
+  # i = i + len(accList) + 1
+  
+  
 
 wbt.save('UpdatedMAPP.xls')
 
 
 # print("total accessories: " + str(len(accList)))
 # for i in range(0, len(accList)):
-
-#   print(accList[i]["name"] + " - " + accList[i]["productNumber"])
+#   print(accList[i]["name"] + " - " + str(accList[i]["productNumber"]))
 
