@@ -46,9 +46,57 @@ for x in range(0, xlListEnd):
       groupGlobal = False
     else:
       # TODO need to reset the accList and modelList on new Model group
-      # TODO put the write method here
+      ### WRITE TO XLS METHOD ###
+      modelStart = 0
+      accStart = 0
+      globalStart = 0
+      #add models found to XLS
+      for i in range(0, len(modelList)):
+        wst.write(modelStart, 0, "Model")
+        wst.write(modelStart, 3, "Ricoh Production MAPP")
+        wst.write(modelStart, 4, modelList[i]["name"])
+        wst.write(modelStart, 5, "Equipment")
+        wst.write(modelStart, 6, "Production")
+        wst.write(modelStart, 11, modelList[i]["productNumber"])
+        wst.write(modelStart, 13, modelList[i]["name"])
+        wst.write(modelStart, 14, 0)
+        wst.write(modelStart, 15, 0)
+        wst.write(modelStart, 16, 0)
+        wst.write(modelStart, 17, 0)
+        wst.write(modelStart, 18, modelList[i]["mapp"])
+        wst.write(modelStart, 19, modelList[i]["mapp"])
+        wst.write(modelStart, 20, modelList[i]["msrp"])
+        wst.write(modelStart, 29, modelList[i]["desc"])
+        wst.write(modelStart, 31, modelList[i]["rmapp"])
+        wst.write(modelStart, 32, modelList[i]["rmapp2"])
+        # write a bunch of zeros in the special pricing fields
+        for j in range(0,38):
+          wst.write(modelStart,33+j, 0)
+
+        globalStart = globalStart + 1
+        #write in accessories
+        for k in range(0, len(globalList)):
+          wst.write(globalStart, 0, "Accessory")
+          wst.write(globalStart, 3, "Ricoh Production MAPP")
+          wst.write(globalStart, 4, globalList[k]["name"])
+          wst.write(globalStart, 13, globalList[k]["name"])
+          globalStart = globalStart + 1
+
+        accStart = globalStart
+        #write in accessories
+        for j in range(0, len(accList)):
+          wst.write(accStart, 0, "Accessory")
+          wst.write(accStart, 3, "Ricoh Production MAPP")
+          wst.write(accStart, 4, accList[j]["name"])
+          wst.write(accStart, 13, accList[j]["name"])
+          accStart = accStart + 1
+        
+        globalStart = accStart
+        modelStart = accStart
+        ### /WRITE TO XLS METHOD ###
       print('end of config')
       break
+
 
   # if we hit 'Accessories' stop grouping the models and start grouping the accessories
   if testInput == "Accessories":
@@ -153,56 +201,6 @@ for x in range(0, xlListEnd):
 
     globalList.append(newModel)
 
-### WRITE TO XLS METHOD ###
-modelStart = 0
-accStart = 0
-globalStart = 0
-
-#add models found to XLS
-for i in range(0, len(modelList)):
-  wst.write(modelStart, 0, "Model")
-  wst.write(modelStart, 3, "Ricoh Production MAPP")
-  wst.write(modelStart, 4, modelList[i]["name"])
-  wst.write(modelStart, 5, "Equipment")
-  wst.write(modelStart, 6, "Production")
-  wst.write(modelStart, 11, modelList[i]["productNumber"])
-  wst.write(modelStart, 13, modelList[i]["name"])
-  wst.write(modelStart, 14, 0)
-  wst.write(modelStart, 15, 0)
-  wst.write(modelStart, 16, 0)
-  wst.write(modelStart, 17, 0)
-  wst.write(modelStart, 18, modelList[i]["mapp"])
-  wst.write(modelStart, 19, modelList[i]["mapp"])
-  wst.write(modelStart, 20, modelList[i]["msrp"])
-  wst.write(modelStart, 29, modelList[i]["desc"])
-  wst.write(modelStart, 31, modelList[i]["rmapp"])
-  wst.write(modelStart, 32, modelList[i]["rmapp2"])
-  # write a bunch of zeros in the special pricing fields
-  for j in range(0,38):
-    wst.write(modelStart,33+j, 0)
-
-  globalStart = globalStart + 1
-  #write in accessories
-  for k in range(0, len(globalList)):
-    wst.write(globalStart, 0, "Accessory")
-    wst.write(globalStart, 3, "Ricoh Production MAPP")
-    wst.write(globalStart, 4, globalList[k]["name"])
-    wst.write(globalStart, 13, globalList[k]["name"])
-    globalStart = globalStart + 1
-
-  accStart = globalStart
-  #write in accessories
-  for j in range(0, len(accList)):
-    wst.write(accStart, 0, "Accessory")
-    wst.write(accStart, 3, "Ricoh Production MAPP")
-    wst.write(accStart, 4, accList[j]["name"])
-    wst.write(accStart, 13, accList[j]["name"])
-    accStart = accStart + 1
-  
-  globalStart = accStart
-  modelStart = accStart
-  ### /WRITE TO XLS METHOD ###
-    
 
 modelListLen = len(modelList)
 globalListLen = len(globalList)
@@ -213,12 +211,9 @@ print("Attached " + str(globalListLen) + " global accessories to each model")
 print("Attached " + str(accListLen) + " 'model specific' accesories to each model")
 print("totalling " + str(modelListLen + globalListLen + accListLen) + " line items" )
 
-
-  
 wbt.save('UpdatedMAPP.xls')
 
-
-print("total globals: " + str(len(accList)))
-for i in range(0, len(accList)):
-  print(str(accList[i]["productNumber"]) + " - " + accList[i]["name"])
+# print("total globals: " + str(len(accList)))
+# for i in range(0, len(accList)):
+#   print(str(accList[i]["productNumber"]) + " - " + accList[i]["name"])
 
