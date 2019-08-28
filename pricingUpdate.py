@@ -12,23 +12,38 @@ wbt = xlwt.Workbook()
 wst = wbt.add_sheet('Updated Mapp')
 
 # establish starting points
-testInput = sheet.cell_value(0,0)
 groupModels = False
 groupAcc = False
+groupService = False
+groupGlobal = False
 modelList = []
 accList = []
+globalList = []
 xlListEnd = 900
 
 for x in range(0, xlListEnd):
   testInput = sheet.cell_value(x,0)
+
+  # if we find "Professional Services", that signals the group of global accessories
+  if testInput == "Professional Services":
+    groupModels = False
+    groupAcc = False
+    groupService = False
+    groupGlobal = True
+
   # if we find input named main unit, that signals a group of models
   if testInput == "Main Unit":
     groupModels = True
     groupAcc = False
+    groupService = False
+    groupGlobal = False
+
     #if the accessory list is empty, that means we're still in the same model category
     if len(accList) <= 0:
       groupModels = True
       groupAcc = False
+      groupService = False
+      groupGlobal = False
     else:
       # TODO need to reset the modelList on new Model group
       print('end of config')
@@ -38,17 +53,21 @@ for x in range(0, xlListEnd):
   if testInput == "Accessories":
     groupModels = False
     groupAcc = True
+    groupService = False
+    groupGlobal = False
     #TODO need to reset the accList on new accessory group
 
-  # if we hit service data, stop 
+  # if we hit service data, GROUP SERVICE DATA
   if testInput == "Service Data":
     groupModels = False
     groupAcc = False
+    groupService = True
+    groupGlobal = False
     # TODO remove break for further logic
     print('hit service data')
     break
 
-  # group models together to attach related accessories.
+  # GROUP MODELS together to attach related accessories.
   if groupModels == True and testInput != "Main Unit" and testInput != '':
     try:
       productNumber = int(sheet.cell_value(x,0))
@@ -105,14 +124,41 @@ for x in range(0, xlListEnd):
 
     accList.append(newAcc)
 
+  # GROUP GLOBAL ACCESSORIES
+  if groupGlobal == True and testInput != "Professional Services" and testInput != '':
+    try:
+      productNumber = int(sheet.cell_value(x,0))
+    except:
+      productNumber = str(sheet.cell_value(x,0))
+    name = str(sheet.cell_value(x,1))
+    desc = str(sheet.cell_value(x+1,1))
+    try:
+      mapp = int(sheet.cell_value(x,2))
+      rmapp = int(sheet.cell_value(x,3))
+      rmapp2 = int(sheet.cell_value(x,4))
+      msrp = int(sheet.cell_value(x,5))
+    except ValueError:
+      continue
+  
+    newModel = {
+      "productNumber": productNumber,
+      "name": name,
+      "desc": desc,
+      "mapp": mapp,
+      "rmapp": rmapp,
+      "rmapp2": rmapp2,
+      "msrp": msrp,
+    }
+
+    globalList.append(newModel)
+
 
 modelStart = 0
 accStart = 0
+globalStart = 0
+
 #add models found to XLS
 for i in range(0, len(modelList)):
-  print("accList: " + str(len(accList)))
-  print("modelStart: " + str(modelStart))
-  print("modelStart + accList length = " + str(len(accList) + modelStart))
   wst.write(modelStart, 0, "Model")
   wst.write(modelStart, 3, "Ricoh Production MAPP")
   wst.write(modelStart, 4, modelList[i]["name"])
@@ -130,35 +176,46 @@ for i in range(0, len(modelList)):
   wst.write(modelStart, 29, modelList[i]["desc"])
   wst.write(modelStart, 31, modelList[i]["rmapp"])
   wst.write(modelStart, 32, modelList[i]["rmapp2"])
-
-
-  accStart = accStart + 1
-  #write in accessories
-  for k in range(0, len(accList)):
-    wst.write(accStart, 0, "Accessory")
-    wst.write(accStart, 3, "Ricoh Production MAPP")
-    wst.write(accStart, 4, accList[k]["name"])
-    wst.write(accStart, 13, accList[k]["name"])
-    accStart = accStart + 1
-  
-  modelStart = modelStart + len(accList) + 1
-  
-  
   # write a bunch of zeros in the special pricing fields
   for j in range(0,38):
     wst.write(modelStart,33+j, 0)
-  # TODO add all accessories related to this model here
-  # for k in range(1,len(accList)):
-  #   wst.write(k, 0, "Accessory")
-  # wst.write(i+1,0, "Accessory")
-  # i = i + len(accList) + 1
+
+  globalStart = globalStart + 1
+  #write in accessories
+  for k in range(0, len(globalList)):
+    wst.write(globalStart, 0, "Accessory")
+    wst.write(globalStart, 3, "Ricoh Production MAPP")
+    wst.write(globalStart, 4, globalList[k]["name"])
+    wst.write(globalStart, 13, globalList[k]["name"])
+    globalStart = globalStart + 1
+
+  accStart = globalStart
+  #write in accessories
+  for j in range(0, len(accList)):
+    wst.write(accStart, 0, "Accessory")
+    wst.write(accStart, 3, "Ricoh Production MAPP")
+    wst.write(accStart, 4, accList[j]["name"])
+    wst.write(accStart, 13, accList[j]["name"])
+    accStart = accStart + 1
   
+  globalStart = accStart
+  modelStart = accStart
+    
+
+modelListLen = len(modelList)
+globalListLen = len(globalList)
+accListLen = len(accList)
+
+print("Added: " + str(modelListLen) + " models")
+print("Attached " + str(globalListLen) + " global accessories to each model")
+print("Attached " + str(accListLen) + " 'model specific' accesories to each model")
+print("totalling " + str(modelListLen + globalListLen + accListLen) + " line items" )
   
 
 wbt.save('UpdatedMAPP.xls')
 
 
-# print("total accessories: " + str(len(accList)))
-# for i in range(0, len(accList)):
-#   print(accList[i]["name"] + " - " + str(accList[i]["productNumber"]))
+# print("total globals: " + str(len(globalList)))
+# for i in range(0, len(globalList)):
+#   print(str(globalList[i]["productNumber"]) + " - " + globalList[i]["name"])
 
