@@ -93,10 +93,16 @@ for x in range(0, xlListEnd):
         
         globalStart = accStart
         modelStart = accStart
+        
         ### /WRITE TO XLS METHOD ###
       print('end of config')
+      accListLen = len(accList)
+      modelListLen = len(modelList)
+      print("Added: " + str(modelListLen) + " models")
+      print("Attached " + str(accListLen) + " 'model specific' accesories to each model")
+      modelList = []
+      accList = []
       break
-
 
   # if we hit 'Accessories' stop grouping the models and start grouping the accessories
   if testInput == "Accessories":
@@ -202,14 +208,12 @@ for x in range(0, xlListEnd):
     globalList.append(newModel)
 
 
-modelListLen = len(modelList)
 globalListLen = len(globalList)
-accListLen = len(accList)
 
-print("Added: " + str(modelListLen) + " models")
+
 print("Attached " + str(globalListLen) + " global accessories to each model")
-print("Attached " + str(accListLen) + " 'model specific' accesories to each model")
 print("totalling " + str(modelListLen + globalListLen + accListLen) + " line items" )
+
 
 wbt.save('UpdatedMAPP.xls')
 
