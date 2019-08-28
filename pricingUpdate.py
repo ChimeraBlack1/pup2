@@ -19,17 +19,17 @@ groupGlobal = False
 modelList = []
 accList = []
 globalList = []
-xlListEnd = 900
+xlListEnd = 2900
 
 for x in range(0, xlListEnd):
   testInput = sheet.cell_value(x,0)
 
   # if we find "Professional Services", that signals the group of global accessories
   if testInput == "Professional Services":
+    groupGlobal = True
     groupModels = False
     groupAcc = False
     groupService = False
-    groupGlobal = True
 
   # if we find input named main unit, that signals a group of models
   if testInput == "Main Unit":
@@ -45,29 +45,29 @@ for x in range(0, xlListEnd):
       groupService = False
       groupGlobal = False
     else:
-      # TODO need to reset the modelList on new Model group
+      # TODO need to reset the accList and modelList on new Model group
+      # TODO put the write method here
       print('end of config')
       break
 
-  # if we hit 'accessories' stop grouping the models
+  # if we hit 'Accessories' stop grouping the models and start grouping the accessories
   if testInput == "Accessories":
-    groupModels = False
     groupAcc = True
+    groupModels = False
     groupService = False
     groupGlobal = False
     #TODO need to reset the accList on new accessory group
-
+  
   # if we hit service data, GROUP SERVICE DATA
   if testInput == "Service Data":
+    groupService = True
     groupModels = False
     groupAcc = False
-    groupService = True
     groupGlobal = False
     # TODO remove break for further logic
     print('hit service data')
-    break
-
-  # GROUP MODELS together to attach related accessories.
+  
+  # GROUP MODELS
   if groupModels == True and testInput != "Main Unit" and testInput != '':
     try:
       productNumber = int(sheet.cell_value(x,0))
@@ -96,7 +96,7 @@ for x in range(0, xlListEnd):
     modelList.append(newModel)
 
 
-  # create a list of accessories related to attach to these models
+  # GROUP MODEL SPECIFIC ACCESSORIES
   if groupAcc == True and testInput != "Accessories" and testInput != '':
     try:
       productNumber = int(sheet.cell_value(x,0))
@@ -122,7 +122,8 @@ for x in range(0, xlListEnd):
       "msrp": msrp,
     }
 
-    accList.append(newAcc)
+    if newAcc['name'] != 'NM':
+      accList.append(newAcc)
 
   # GROUP GLOBAL ACCESSORIES
   if groupGlobal == True and testInput != "Professional Services" and testInput != '':
@@ -152,7 +153,7 @@ for x in range(0, xlListEnd):
 
     globalList.append(newModel)
 
-
+### WRITE TO XLS METHOD ###
 modelStart = 0
 accStart = 0
 globalStart = 0
@@ -200,6 +201,7 @@ for i in range(0, len(modelList)):
   
   globalStart = accStart
   modelStart = accStart
+  ### /WRITE TO XLS METHOD ###
     
 
 modelListLen = len(modelList)
@@ -210,12 +212,13 @@ print("Added: " + str(modelListLen) + " models")
 print("Attached " + str(globalListLen) + " global accessories to each model")
 print("Attached " + str(accListLen) + " 'model specific' accesories to each model")
 print("totalling " + str(modelListLen + globalListLen + accListLen) + " line items" )
-  
 
+
+  
 wbt.save('UpdatedMAPP.xls')
 
 
-# print("total globals: " + str(len(globalList)))
-# for i in range(0, len(globalList)):
-#   print(str(globalList[i]["productNumber"]) + " - " + globalList[i]["name"])
+print("total globals: " + str(len(accList)))
+for i in range(0, len(accList)):
+  print(str(accList[i]["productNumber"]) + " - " + accList[i]["name"])
 
