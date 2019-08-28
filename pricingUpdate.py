@@ -11,14 +11,13 @@ sheet = wb.sheet_by_index(0)
 wbt = xlwt.Workbook()
 wst = wbt.add_sheet('Updated Mapp')
 
-#for row 0 and column 0
+# establish starting points
 testInput = sheet.cell_value(0,0)
 groupModels = False
 groupAcc = False
 modelList = []
 accList = []
 xlListEnd = 900
-
 
 for x in range(0, xlListEnd):
   testInput = sheet.cell_value(x,0)
@@ -32,6 +31,7 @@ for x in range(0, xlListEnd):
       groupAcc = False
     else:
       # TODO need to reset the modelList on new Model group
+      print('end of config')
       break
 
   # if we hit 'accessories' stop grouping the models
@@ -40,10 +40,12 @@ for x in range(0, xlListEnd):
     groupAcc = True
     #TODO need to reset the accList on new accessory group
 
+  # if we hit service data, stop 
   if testInput == "Service Data":
     groupModels = False
     groupAcc = False
     # TODO remove break for further logic
+    print('hit service data')
     break
 
   # group models together to attach related accessories.
@@ -104,10 +106,6 @@ for x in range(0, xlListEnd):
     accList.append(newAcc)
 
 
-# print("total models: " + str(len(modelList)))
-
-# for i in range(0, len(modelList)):
-#   print(modelList[i]["name"] + " - " + str(modelList[i]["productNumber"]))
 modelStart = 0
 accStart = 0
 #add models found to XLS
@@ -132,10 +130,7 @@ for i in range(0, len(modelList)):
   wst.write(modelStart, 29, modelList[i]["desc"])
   wst.write(modelStart, 31, modelList[i]["rmapp"])
   wst.write(modelStart, 32, modelList[i]["rmapp2"])
-  
-  # print("accList again: " + str(len(accList)))
-  # print("modelStart again: " + str(modelStart))
-  # print("modelStart again + accList length again = " + str(len(accList) + modelStart))
+
 
   accStart = accStart + 1
   #write in accessories
