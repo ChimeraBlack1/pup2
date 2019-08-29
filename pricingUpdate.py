@@ -76,19 +76,55 @@ for x in range(0, xlListEnd):
         globalStart = globalStart + 1
         #write in accessories
         for k in range(0, len(globalList)):
-          wst.write(globalStart, 0, "Accessory")
+          wst.write(globalStart, 0, "Access")
           wst.write(globalStart, 3, "Ricoh Production MAPP")
           wst.write(globalStart, 4, globalList[k]["name"])
+          wst.write(globalStart, 8, "ACCESSORY")
+          wst.write(globalStart, 9, "N")
+          wst.write(globalStart, 11, globalList[k]["productNumber"])
           wst.write(globalStart, 13, globalList[k]["name"])
+          wst.write(globalStart, 14, 0)
+          wst.write(globalStart, 15, 0)
+          wst.write(globalStart, 16, 0)
+          wst.write(globalStart, 17, 0)
+          wst.write(globalStart, 18, globalList[k]["mapp"])
+          wst.write(globalStart, 19, globalList[k]["mapp"])
+          wst.write(globalStart, 20, globalList[k]["msrp"])
+          wst.write(globalStart, 25, 0)
+          wst.write(globalStart, 29, globalList[k]["desc"])
+          wst.write(globalStart, 31, globalList[k]["rmapp"])
+          wst.write(globalStart, 32, globalList[k]["rmapp2"])
+          # write a bunch of zeros in the special pricing fields
+          for l in range(0,38):
+            wst.write(globalStart,33+l, 0)
+
           globalStart = globalStart + 1
 
         accStart = globalStart
         #write in accessories
         for j in range(0, len(accList)):
-          wst.write(accStart, 0, "Accessory")
+          wst.write(accStart, 0, "Access")
           wst.write(accStart, 3, "Ricoh Production MAPP")
           wst.write(accStart, 4, accList[j]["name"])
+          wst.write(accStart, 8, "ACCESSORY")
+          wst.write(accStart, 9, "N")
+          wst.write(accStart, 11, accList[j]["productNumber"])
           wst.write(accStart, 13, accList[j]["name"])
+          wst.write(accStart, 14, 0)
+          wst.write(accStart, 15, 0)
+          wst.write(accStart, 16, 0)
+          wst.write(accStart, 17, 0)
+          wst.write(accStart, 18, accList[j]["mapp"])
+          wst.write(accStart, 19, accList[j]["mapp"])
+          wst.write(accStart, 20, accList[j]["msrp"])
+          wst.write(accStart, 25, 0)
+          wst.write(accStart, 29, accList[j]["desc"])
+          wst.write(accStart, 31, accList[j]["rmapp"])
+          wst.write(accStart, 32, accList[j]["rmapp2"])
+          # write a bunch of zeros in the special pricing fields
+          for m in range(0,38):
+            wst.write(accStart,33+m, 0)
+
           accStart = accStart + 1
         
         globalStart = accStart
@@ -212,7 +248,7 @@ globalListLen = len(globalList)
 
 
 print("Attached " + str(globalListLen) + " global accessories to each model")
-print("totalling " + str(modelListLen + globalListLen + accListLen) + " line items" )
+print("totalling " + str((modelListLen + globalListLen + accListLen) * modelListLen) + " line items" )
 
 
 wbt.save('UpdatedMAPP.xls')
