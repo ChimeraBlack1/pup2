@@ -19,10 +19,16 @@ groupGlobal = False
 modelList = []
 accList = []
 globalList = []
-xlListEnd = 2900
+modelStart = 0
+accStart = 0
+globalStart = 0
+xlListEnd = 5000
+lastRowRead = 0
+
 
 for x in range(0, xlListEnd):
   testInput = sheet.cell_value(x,0)
+  lastRowRead = x
 
   # if we find "Professional Services", that signals the group of global accessories
   if testInput == "Professional Services":
@@ -37,6 +43,7 @@ for x in range(0, xlListEnd):
     groupAcc = False
     groupService = False
     groupGlobal = False
+    print('hit Main Unit' + ' on line: ' + str(x + 1) + ' in excel' + ' and accList has a length of ' + str(len(accList)) + ' and modelList has a length of ' + str(len(modelList)))
 
     #if the accessory list is empty, that means we're still in the same model category
     if len(accList) <= 0:
@@ -47,9 +54,7 @@ for x in range(0, xlListEnd):
     else:
       # TODO need to reset the accList and modelList on new Model group
       ### WRITE TO XLS METHOD ###
-      modelStart = 0
-      accStart = 0
-      globalStart = 0
+
       #add models found to XLS
       for i in range(0, len(modelList)):
         wst.write(modelStart, 0, "Model")
@@ -134,11 +139,18 @@ for x in range(0, xlListEnd):
       print('end of config')
       accListLen = len(accList)
       modelListLen = len(modelList)
+      globalListLen = len(globalList)
       print("Added: " + str(modelListLen) + " models")
       print("Attached " + str(accListLen) + " 'model specific' accesories to each model")
+      print("Attached " + str(globalListLen) + " global accessories to each model")
+      print("totalling " + str((modelListLen + globalListLen + accListLen) * modelListLen) + " line items" )
       modelList = []
       accList = []
-      break
+      groupModels = True
+      groupAcc = False
+      groupService = False
+      groupGlobal = False
+      #break
 
   # if we hit 'Accessories' stop grouping the models and start grouping the accessories
   if testInput == "Accessories":
@@ -146,6 +158,7 @@ for x in range(0, xlListEnd):
     groupModels = False
     groupService = False
     groupGlobal = False
+    print('hit Accessories'  + ' on line: ' + str(x + 1) + ' in excel')
     #TODO need to reset the accList on new accessory group
   
   # if we hit service data, GROUP SERVICE DATA
@@ -155,7 +168,7 @@ for x in range(0, xlListEnd):
     groupAcc = False
     groupGlobal = False
     # TODO remove break for further logic
-    print('hit service data')
+    print('hit service data'  + ' on line: ' + str(x + 1) + ' in excel')
   
   # GROUP MODELS
   if groupModels == True and testInput != "Main Unit" and testInput != '':
@@ -244,12 +257,8 @@ for x in range(0, xlListEnd):
     globalList.append(newModel)
 
 
-globalListLen = len(globalList)
-
-
-print("Attached " + str(globalListLen) + " global accessories to each model")
-print("totalling " + str((modelListLen + globalListLen + accListLen) * modelListLen) + " line items" )
-
+print("last row read in ProdMAPP: " + str(lastRowRead))
+print("last testInput: " + str(testInput))
 
 wbt.save('UpdatedMAPP.xls')
 
