@@ -22,7 +22,7 @@ globalList = []
 modelStart = 0
 accStart = 0
 globalStart = 0
-xlListEnd = 5000
+xlListEnd = 6500
 lastRowRead = 0
 
 
