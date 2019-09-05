@@ -2,10 +2,25 @@ import xlrd
 import xlwt
 import math
 
-loc = ("ProdMAPP.xlsx")
+
+# Take a filename as Input.  If it doesn't work, try again until it does work.
+goodFile = False
+
+while goodFile == False:
+  fileToRead = input("Please enter the filename exactly as spelled (case sensetive, xlsx only, omit file type): ")
+  if fileToRead == "":
+    loc = ("ProdMAPP.xlsx")
+    goodFile = True
+    wb = xlrd.open_workbook(loc)
+  else:
+    loc = fileToRead + ".xlsx"
+    try:
+      wb = xlrd.open_workbook(loc)
+      goodFile = True
+    except:
+      print("I can't find that file, try again...")
 
 #open workbook
-wb = xlrd.open_workbook(loc)
 sheet = wb.sheet_by_index(0)
 
 #write to workbook
