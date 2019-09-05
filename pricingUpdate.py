@@ -1,5 +1,6 @@
 import xlrd
 import xlwt
+import math
 
 loc = ("ProdMAPP.xlsx")
 
@@ -15,27 +16,32 @@ wst = wbt.add_sheet('Updated Mapp')
 groupModels = False
 groupAcc = False
 groupService = False
-groupGlobal = False
+groupGlobal = True
 modelList = []
 accList = []
 globalList = []
 modelStart = 0
 accStart = 0
 globalStart = 0
-xlListEnd = 6500
+xlListEnd = 4291  
 lastRowRead = 0
-
+timeSavedsec = 0
+timeSavedmin = 0
+timeSavedhr = 0
+modelsAdded = 0 
+accAdded = 0 
+globalAdded = 0
 
 for x in range(0, xlListEnd):
   testInput = sheet.cell_value(x,0)
   lastRowRead = x
 
   # if we find "Professional Services", that signals the group of global accessories
-  if testInput == "Professional Services":
-    groupGlobal = True
-    groupModels = False
-    groupAcc = False
-    groupService = False
+  # if testInput == "Professional Services":
+  #   groupGlobal = True
+  #   groupModels = False
+  #   groupAcc = False
+  #   groupService = False
 
   # if we find input named main unit, that signals a group of models
   if testInput == "Main Unit":
@@ -140,10 +146,15 @@ for x in range(0, xlListEnd):
       accListLen = len(accList)
       modelListLen = len(modelList)
       globalListLen = len(globalList)
-      print("Added: " + str(modelListLen) + " models")
+      timeSavedsec = timeSavedsec + (modelListLen * 120) + (accListLen * 60) + (globalListLen * 15)
+      timeSavedmin = timeSavedmin + ((modelListLen * 120) + (accListLen * 60) + (globalListLen * 15)) / 60
+      timeSavedhr =  timeSavedhr + (((modelListLen * 120) + (accListLen * 60) + (globalListLen * 15)) / 60) / 60
+      for y in range(0,modelListLen):
+        print("Added: " + modelList[y]['name'])
       print("Attached " + str(accListLen) + " 'model specific' accesories to each model")
       print("Attached " + str(globalListLen) + " global accessories to each model")
       print("totalling " + str((modelListLen + globalListLen + accListLen) * modelListLen) + " line items" )
+      print("==================================================================")
       modelList = []
       accList = []
       groupModels = True
@@ -259,6 +270,7 @@ for x in range(0, xlListEnd):
 
 print("last row read in ProdMAPP: " + str(lastRowRead))
 print("last testInput: " + str(testInput))
+print("Time Saved: " + str(math.floor(timeSavedhr)) + " hours and " + str(round((timeSavedhr - math.floor(timeSavedhr)) * 60)) + " minutes")
 
 wbt.save('UpdatedMAPP.xls')
 
