@@ -7,7 +7,6 @@ goodFile = False
 
 while goodFile == False:
   fileToRead = input("Please enter the filename exactly as spelled (case sensetive, xlsx only, omit file type): ")
-  fileToOutput = input("Great, now what should be the name of the file that get's generated with the updated MAPP costs and items?")
   if fileToRead == "":
     loc = ("ProdMAPP.xlsx")
     goodFile = True
@@ -24,8 +23,9 @@ while goodFile == False:
       print("I can't find that file, try again...")
   
   #set fileOutput
+  fileToOutput = input("Great, now what should be the name of the file that gets generated with the updated MAPP costs and items?")
   if fileToOutput == "":
-    fileToOutput = "UpdatedMAPP.xlsx"
+    fileToOutput = "UpdatedMAPP.xls"
   else:
     fileToOutput = fileToOutput + ".xls"
 
@@ -47,7 +47,7 @@ globalList = []
 modelStart = 0
 accStart = 0
 globalStart = 0
-xlListEnd = 4291  
+xlListValid = False 
 lastRowRead = 0
 timeSavedsec = 0
 timeSavedmin = 0
@@ -55,6 +55,22 @@ timeSavedhr = 0
 modelsAdded = 0 
 accAdded = 0 
 globalAdded = 0
+avgTimeToAddModel = 120
+avgTimeToAddAcc = 60
+avgTimeToAddGlobalAcc = 15
+
+while xlListValid == False:
+  xlListEnd = input("What line should I read the excel file to?")
+  if xlListValid == "":
+    xlListEnd = 4229
+    xlListValid = True
+  try:
+    xlListEnd = int(xlListEnd)
+    xlListValid = True
+  except:
+    print("Invalid input.  Please put in a whole number")
+
+
 
 for x in range(0, xlListEnd):
   testInput = sheet.cell_value(x,0)
@@ -170,9 +186,9 @@ for x in range(0, xlListEnd):
       accListLen = len(accList)
       modelListLen = len(modelList)
       globalListLen = len(globalList)
-      timeSavedsec = timeSavedsec + (modelListLen * 120) + (accListLen * 60) + (globalListLen * 15)
-      timeSavedmin = timeSavedmin + ((modelListLen * 120) + (accListLen * 60) + (globalListLen * 15)) / 60
-      timeSavedhr =  timeSavedhr + (((modelListLen * 120) + (accListLen * 60) + (globalListLen * 15)) / 60) / 60
+      timeSavedsec = timeSavedsec + (modelListLen * avgTimeToAddModel) + (accListLen * avgTimeToAddAcc) + (globalListLen * avgTimeToAddGlobalAcc)
+      timeSavedmin = timeSavedmin + ((modelListLen * avgTimeToAddModel) + (accListLen * avgTimeToAddAcc) + (globalListLen * avgTimeToAddGlobalAcc)) / 60
+      timeSavedhr =  timeSavedhr + (((modelListLen * avgTimeToAddModel) + (accListLen * avgTimeToAddAcc) + (globalListLen * avgTimeToAddGlobalAcc)) / 60) / 60
       for y in range(0,modelListLen):
         print("Added: " + modelList[y]['name'])
       print("Attached " + str(accListLen) + " 'model specific' accesories to each model")
@@ -292,14 +308,16 @@ for x in range(0, xlListEnd):
     globalList.append(newModel)
 
 
-print("last row read in ProdMAPP: " + str(lastRowRead))
+modelListLen = len(modelList)
+#File resolution UI messages
+if modelListLen >=1:
+  print("there are " + str(modelListLen) + " orphan models that did not get entered. they are: ")
+  for x in modelList:
+    print(str(modelList))
+print("last row read in ProdMAPP: " + str(xlListEnd))
 print("last testInput: " + str(testInput))
 print("Time Saved: " + str(math.floor(timeSavedhr)) + " hours and " + str(round((timeSavedhr - math.floor(timeSavedhr)) * 60)) + " minutes")
-
 wbt.save(fileToOutput)
 print("File saved as " + "'" + str(fileToOutput) + "'")
 
-# print("total globals: " + str(len(accList)))
-# for i in range(0, len(accList)):
-#   print(str(accList[i]["productNumber"]) + " - " + accList[i]["name"])
 
