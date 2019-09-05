@@ -2,12 +2,12 @@ import xlrd
 import xlwt
 import math
 
-
 # Take a filename as Input.  If it doesn't work, try again until it does work.
 goodFile = False
 
 while goodFile == False:
   fileToRead = input("Please enter the filename exactly as spelled (case sensetive, xlsx only, omit file type): ")
+  fileToOutput = input("Great, now what should be the name of the file that get's generated with the updated MAPP costs and items?")
   if fileToRead == "":
     loc = ("ProdMAPP.xlsx")
     goodFile = True
@@ -22,6 +22,12 @@ while goodFile == False:
       goodFile = True
     except:
       print("I can't find that file, try again...")
+  
+  #set fileOutput
+  if fileToOutput == "":
+    fileToOutput = "UpdatedMAPP.xlsx"
+  else:
+    fileToOutput = fileToOutput + ".xls"
 
 #open workbook
 sheet = wb.sheet_by_index(0)
@@ -290,7 +296,8 @@ print("last row read in ProdMAPP: " + str(lastRowRead))
 print("last testInput: " + str(testInput))
 print("Time Saved: " + str(math.floor(timeSavedhr)) + " hours and " + str(round((timeSavedhr - math.floor(timeSavedhr)) * 60)) + " minutes")
 
-wbt.save('UpdatedMAPP.xls')
+wbt.save(fileToOutput)
+print("File saved as " + "'" + str(fileToOutput) + "'")
 
 # print("total globals: " + str(len(accList)))
 # for i in range(0, len(accList)):
