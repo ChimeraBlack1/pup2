@@ -12,6 +12,9 @@ while goodFile == False:
     loc = ("ProdMAPP.xlsx")
     goodFile = True
     wb = xlrd.open_workbook(loc)
+  elif fileToRead == "exit" or fileToRead == "quit":
+    print("ok, bye!")
+    exit()    
   else:
     loc = fileToRead + ".xlsx"
     try:
