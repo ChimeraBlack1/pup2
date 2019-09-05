@@ -6,7 +6,7 @@ import math
 goodFile = False
 
 while goodFile == False:
-  fileToRead = input("Please enter the filename exactly as spelled (case sensetive, xlsx only, omit file type): ")
+  fileToRead = input("Please enter the filename exactly as spelled (xlsx only, omit file type in name)> ")
   if fileToRead == "":
     loc = ("ProdMAPP.xlsx")
     goodFile = True
@@ -21,13 +21,14 @@ while goodFile == False:
       goodFile = True
     except:
       print("I can't find that file, try again...")
-  
-  #set fileOutput
-  fileToOutput = input("Great, now what should be the name of the file that gets generated with the updated MAPP costs and items?")
-  if fileToOutput == "":
-    fileToOutput = "UpdatedMAPP.xls"
-  else:
-    fileToOutput = fileToOutput + ".xls"
+
+#set fileOutput
+fileToOutput = input("Great, now what should be the name of the file that gets generated with the updated MAPP costs and items?> ")
+if fileToOutput == "":
+  fileToOutput = "UpdatedMAPP.xls"
+else:
+  fileToOutput = fileToOutput + ".xls"
+
 
 #open workbook
 sheet = wb.sheet_by_index(0)
@@ -60,16 +61,36 @@ avgTimeToAddAcc = 60
 avgTimeToAddGlobalAcc = 15
 
 while xlListValid == False:
-  xlListEnd = input("What line should I read the excel file to?")
-  if xlListValid == "":
+  xlListEnd = input("What line should I read the excel file to?> ")
+  if xlListEnd == "":
     xlListEnd = 4229
     xlListValid = True
   try:
     xlListEnd = int(xlListEnd)
     xlListValid = True
   except:
-    print("Invalid input.  Please put in a whole number")
+    print("Invalid input.  Please put in a whole number ")
 
+
+# is this a hardware or production mapp?
+mappTypeValid = False
+
+while mappTypeValid == False:
+  mappType = input("is this a legacy, hardware, or production MAPP? type(L) for legacy, (H) for Hardware, and (P) for production and hit enter> ")
+
+  mappType = mappType.upper()
+
+  if mappType == "L":
+    thisMapp = "Ricoh Legacy MAPP"
+    mappTypeValid = True
+  elif mappType == "H":
+    thisMapp = "Ricoh HW MAPP"
+    mappTypeValid = True
+  elif mappType == "P":
+    thisMapp = "Ricoh Production MAPP"
+    mappTypeValid = True
+  else:
+    print("Sorry, that type of MAPP is invalid, choose again.")
 
 
 for x in range(0, xlListEnd):
@@ -104,7 +125,7 @@ for x in range(0, xlListEnd):
       #add models found to XLS
       for i in range(0, len(modelList)):
         wst.write(modelStart, 0, "Model")
-        wst.write(modelStart, 3, "Ricoh Production MAPP")
+        wst.write(modelStart, 3, thisMapp)
         wst.write(modelStart, 4, modelList[i]["name"])
         wst.write(modelStart, 5, "Equipment")
         wst.write(modelStart, 6, "Production")
@@ -128,7 +149,7 @@ for x in range(0, xlListEnd):
         #write in accessories
         for k in range(0, len(globalList)):
           wst.write(globalStart, 0, "Access")
-          wst.write(globalStart, 3, "Ricoh Production MAPP")
+          wst.write(globalStart, 3, thisMapp)
           wst.write(globalStart, 4, globalList[k]["name"])
           wst.write(globalStart, 8, "ACCESSORY")
           wst.write(globalStart, 9, "N")
@@ -155,7 +176,7 @@ for x in range(0, xlListEnd):
         #write in accessories
         for j in range(0, len(accList)):
           wst.write(accStart, 0, "Access")
-          wst.write(accStart, 3, "Ricoh Production MAPP")
+          wst.write(accStart, 3, thisMapp)
           wst.write(accStart, 4, accList[j]["name"])
           wst.write(accStart, 8, "ACCESSORY")
           wst.write(accStart, 9, "N")
