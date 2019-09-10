@@ -63,7 +63,7 @@ avgTimeToAddGlobalAcc = 15
 while xlListValid == False:
   xlListEnd = input("What line should I read the excel file to?> ")
   if xlListEnd == "":
-    xlListEnd = 4229
+    xlListEnd = 4292
     xlListValid = True
   try:
     xlListEnd = int(xlListEnd)
@@ -105,7 +105,7 @@ for x in range(0, xlListEnd):
     groupGlobal = False
     print('hit Main Unit' + ' on line: ' + str(x + 1) + ' in excel' + ' and accList has a length of ' + str(len(accList)) + ' and modelList has a length of ' + str(len(modelList)))
 
-    #if the accessory list is empty, that means we're still in the same model category
+    # if the accessory list is empty, that means we're still in the same model category
     if len(accList) <= 0:
       groupModels = True
       groupAcc = False
@@ -113,7 +113,7 @@ for x in range(0, xlListEnd):
       groupGlobal = False
     else:
       ### WRITE TO XLS METHOD ###
-      #add models found to XLS
+      # add models found to XLS
       for i in range(0, len(modelList)):
         wst.write(modelStart, 0, "Model")
         wst.write(modelStart, 3, thisMapp)
@@ -129,7 +129,7 @@ for x in range(0, xlListEnd):
         wst.write(modelStart, 18, modelList[i]["mapp"])
         wst.write(modelStart, 19, modelList[i]["mapp"])
         wst.write(modelStart, 20, modelList[i]["msrp"])
-        wst.write(modelStart, 28, modelList[i]['Document Direction Ltd'])
+        wst.write(modelStart, 28, "Document Direction Ltd")
         wst.write(modelStart, 29, modelList[i]["desc"])
         wst.write(modelStart, 31, modelList[i]["rmapp"])
         wst.write(modelStart, 32, modelList[i]["rmapp2"])
@@ -138,11 +138,10 @@ for x in range(0, xlListEnd):
           wst.write(modelStart,33+j, 0)
 
         globalStart = globalStart + 1
-        #write in accessories
+        # write in accessories
         for k in range(0, len(globalList)):
           wst.write(globalStart, 0, "Access")
           wst.write(globalStart, 3, thisMapp)
-          # wst.write(globalStart, 4, globalList[k]["name"])
           wst.write(globalStart, 8, "ACCESSORY")
           wst.write(globalStart, 9, "N")
           wst.write(globalStart, 11, globalList[k]["productNumber"])
@@ -165,11 +164,10 @@ for x in range(0, xlListEnd):
           globalStart = globalStart + 1
 
         accStart = globalStart
-        #write in accessories
+        # write in accessories
         for j in range(0, len(accList)):
           wst.write(accStart, 0, "Access")
           wst.write(accStart, 3, thisMapp)
-          wst.write(accStart, 4, accList[j]["name"])
           wst.write(accStart, 8, "ACCESSORY")
           wst.write(accStart, 9, "N")
           wst.write(accStart, 11, accList[j]["productNumber"])
@@ -322,7 +320,7 @@ for x in range(0, xlListEnd):
 
 
 modelListLen = len(modelList)
-#File resolution UI messages
+# File resolution UI messages
 if modelListLen >=1:
   print("there are " + str(modelListLen) + " orphan models that did not get entered. they are: ")
   for x in modelList:
