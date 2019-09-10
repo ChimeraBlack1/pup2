@@ -97,13 +97,6 @@ for x in range(0, xlListEnd):
   testInput = sheet.cell_value(x,0)
   lastRowRead = x
 
-  # if we find "Professional Services", that signals the group of global accessories
-  # if testInput == "Professional Services":
-  #   groupGlobal = True
-  #   groupModels = False
-  #   groupAcc = False
-  #   groupService = False
-
   # if we find input named main unit, that signals a group of models
   if testInput == "Main Unit":
     groupModels = True
@@ -119,9 +112,7 @@ for x in range(0, xlListEnd):
       groupService = False
       groupGlobal = False
     else:
-      # TODO need to reset the accList and modelList on new Model group
       ### WRITE TO XLS METHOD ###
-
       #add models found to XLS
       for i in range(0, len(modelList)):
         wst.write(modelStart, 0, "Model")
@@ -138,6 +129,7 @@ for x in range(0, xlListEnd):
         wst.write(modelStart, 18, modelList[i]["mapp"])
         wst.write(modelStart, 19, modelList[i]["mapp"])
         wst.write(modelStart, 20, modelList[i]["msrp"])
+        wst.write(modelStart, 28, modelList[i]['Document Direction Ltd'])
         wst.write(modelStart, 29, modelList[i]["desc"])
         wst.write(modelStart, 31, modelList[i]["rmapp"])
         wst.write(modelStart, 32, modelList[i]["rmapp2"])
@@ -150,7 +142,7 @@ for x in range(0, xlListEnd):
         for k in range(0, len(globalList)):
           wst.write(globalStart, 0, "Access")
           wst.write(globalStart, 3, thisMapp)
-          wst.write(globalStart, 4, globalList[k]["name"])
+          # wst.write(globalStart, 4, globalList[k]["name"])
           wst.write(globalStart, 8, "ACCESSORY")
           wst.write(globalStart, 9, "N")
           wst.write(globalStart, 11, globalList[k]["productNumber"])
