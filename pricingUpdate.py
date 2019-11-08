@@ -13,7 +13,7 @@ while goodFile == False:
     wb = xlrd.open_workbook(loc)
   elif fileToRead == "exit" or fileToRead == "quit":
     print("ok, bye!")
-    exit()    
+    exit()
   else:
     loc = fileToRead + ".xlsx"
     try:
@@ -82,12 +82,15 @@ while mappTypeValid == False:
 
   if mappType == "L":
     thisMapp = "Ricoh Legacy MAPP"
+    category = "Legacy"
     mappTypeValid = True
   elif mappType == "H":
     thisMapp = "Ricoh HW MAPP"
+    category = "Hardware"
     mappTypeValid = True
   elif mappType == "P":
     thisMapp = "Ricoh Production MAPP"
+    category = "Production"
     mappTypeValid = True
   else:
     print("Sorry, that type of MAPP is invalid, choose again.")
@@ -119,7 +122,7 @@ for x in range(0, xlListEnd):
         wst.write(modelStart, 3, thisMapp)
         wst.write(modelStart, 4, modelList[i]["name"])
         wst.write(modelStart, 5, "Equipment")
-        wst.write(modelStart, 6, "Production")
+        wst.write(modelStart, 6,  category)
         wst.write(modelStart, 11, modelList[i]["productNumber"])
         wst.write(modelStart, 13, modelList[i]["name"])
         wst.write(modelStart, 14, 0)
@@ -325,7 +328,7 @@ if modelListLen >=1:
   print("there are " + str(modelListLen) + " orphan models that did not get entered. they are: ")
   for x in modelList:
     print(str(modelList))
-print("last row read in ProdMAPP: " + str(xlListEnd))
+print("last row read in the MAPP: " + str(xlListEnd))
 print("last testInput: " + str(testInput))
 print("Time Saved: " + str(math.floor(timeSavedhr)) + " hours and " + str(round((timeSavedhr - math.floor(timeSavedhr)) * 60)) + " minutes")
 wbt.save(fileToOutput)
